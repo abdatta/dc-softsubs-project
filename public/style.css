@@ -19,6 +19,13 @@ h1 {
   overflow-y: auto;
   margin-bottom: 10px;
 }
+.sel-frame {
+  color: blue;
+}
+.sel-frame:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 .frames {
   display: flex;
   flex-flow: column;

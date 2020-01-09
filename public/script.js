@@ -10,7 +10,11 @@ class Subs {
       if (i%2===0) subtext.push([sub, '']);
       else subtext[parseInt(i/2)][1] = sub;
     });
-    $('.subs').html(subtext.map(s => `<div>${s[0]} - ${s[1]}</div>`).join(''));
+    $('.subs').html(subtext.map(s => `
+      <div>
+        <span class="sel-frame" onclick="jumpToFrame('${s[0]}')">${s[0]}</span> -
+        <span class="sel-frame" onclick="jumpToFrame('${s[1]}')">${s[1]}</span>
+      </div>`).join(''));
     $('.subs').scrollTop($('.subs')[0].scrollHeight);
   }
 
@@ -51,27 +55,33 @@ document.onkeydown = (e) => {
   }
   // use e.keyCode
 };
+
 let curr_i = -1;
 const prev = () => {
-  if (curr_i > 0) {
-    $('#img-' + curr_i).hide();
-    $('#cap-' + curr_i).hide();
-    curr_i--;
-    $('#img-' + curr_i).show();
-    $('#cap-' + curr_i).show();
-    updateProgress();
-  }
+  moveTo(curr_i - 1);
 }
+
 const next = () => {
-  if ($('#img-' + (curr_i+1)).length) {
+  moveTo(curr_i + 1);
+}
+
+const jumpToFrame = (frame) => {
+  const frameOffset = parseInt($('#img-0').attr('src').match(/frame(.*)\.jpg/)[1]);
+  const frameIndex = parseInt(frame.match(/frame(.*)\.jpg/)[1]) - frameOffset;
+  moveTo(frameIndex);
+}
+
+const moveTo = (i /* index from 0 */) => {
+  if (i > 0 && $('#img-' + (i+1)).length) {
     $('#img-' + curr_i).hide();
     $('#cap-' + curr_i).hide();
-    curr_i++;
+    curr_i = i;
     $('#img-' + curr_i).show();
     $('#cap-' + curr_i).show();
     updateProgress();
   }
 }
+
 const updateProgress = () => {
   const total = $('*[id^=img-]').length;
   $('.progress').css({width: (curr_i * 100/ total)+'%'});
