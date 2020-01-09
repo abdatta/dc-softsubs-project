@@ -1,0 +1,5 @@
+- Label subs start and end frames manually and press save
+- run collage.js (update the curr dir)
+- put the collage on google vision api and get json results
+- paste the json results in new file "curr_dir"/ocr.json
+- run visapi.js (update the curr dir) -> creates the .ass file in "curr_dir"
