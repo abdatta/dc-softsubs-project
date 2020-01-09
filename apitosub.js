@@ -1,6 +1,5 @@
 const getTextBlocks = (visionResults) => {
     let textBlocks = [];
-    let blockIndex = 0;
     // visionResults.forEach(result => {
     //     result.fullTextAnnotation.pages.forEach(page => {
     //         textBlocks = textBlocks.concat(page.blocks.map(block => ({
@@ -57,7 +56,7 @@ const fs = require('fs');
 const moment = require('moment');
 
 const curr_dir = 'public/episode' + process.argv[2] + '/part_' + process.argv[3] + '/';
-const results = JSON.parse(fs.readFileSync(curr_dir+'ocr.json'));
+const results = JSON.parse(fs.readFileSync(curr_dir+'ocr_results.json'));
 const files = fs.readdirSync(curr_dir+'paired').filter(s => s.endsWith('.jpg'));
 const blocks = getTextBlocks(results.responses);
 if (files.length !== blocks.length) {

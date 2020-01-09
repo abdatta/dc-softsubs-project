@@ -1,2 +1,4 @@
 node_modules
 public/episode*
+.env
+vision-api-key.json
