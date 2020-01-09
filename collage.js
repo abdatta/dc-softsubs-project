@@ -1,7 +1,7 @@
 const createCollage = require("@settlin/collage");
 const fs = require('fs');
 
-const curr_dir = 'public/frames' + process.argv[2] + '/part_' + process.argv[3] + '/';
+const curr_dir = 'public/episode' + process.argv[2] + '/part_' + process.argv[3] + '/';
 
 const pairFrames = async () => {
   const pairs  = JSON.parse(fs.readFileSync(curr_dir+'frames.json'));

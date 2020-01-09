@@ -56,7 +56,7 @@ const getBlockText = (block) => {
 const fs = require('fs');
 const moment = require('moment');
 
-const curr_dir = 'public/frames163/part_' + process.argv[2] + '/';
+const curr_dir = 'public/episode' + process.argv[2] + '/part_' + process.argv[3] + '/';
 const results = JSON.parse(fs.readFileSync(curr_dir+'ocr.json'));
 const files = fs.readdirSync(curr_dir+'paired').filter(s => s.endsWith('.jpg'));
 const blocks = getTextBlocks(results.responses);

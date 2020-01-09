@@ -23,8 +23,8 @@ app.get('/', (req, res) => {
     res.render('framelist', {eps: files});
 });
 
-app.get('/frames:f', (req, res) => {
-    const dir = `public/frames${req.params.f}`;
+app.get('/episode:e', (req, res) => {
+    const dir = `public/episode${req.params.e}`;
     const files = fs.readdirSync(dir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
         .map(dirent => dirent.name);
@@ -32,16 +32,16 @@ app.get('/frames:f', (req, res) => {
         res.render('framelist', {eps: files});
 });
 
-app.get('/frames:f/part_:p/', (req, res) => {
-    const dir = `public/frames${req.params.f}/part_${req.params.p}/`;
+app.get('/episode:e/part_:p/', (req, res) => {
+    const dir = `public/episode${req.params.e}/part_${req.params.p}/`;
     const imgs = fs.readdirSync(dir).filter(s => s.startsWith('frame') && s.endsWith('.jpg'));
     const saved = fs.existsSync(dir+'frames.json') ? JSON.parse(fs.readFileSync(dir+'frames.json')) : [];
 
     res.render('home', {imgs, dir: dir.split('public/')[1], saved: JSON.stringify(pairsToArray(saved))});
 });
 
-app.post('/frames:f/part_:p/save', (req, res) => {
-    const dir = `public/frames${req.params.f}/part_${req.params.p}/`;
+app.post('/episode:e/part_:p/save', (req, res) => {
+    const dir = `public/episode${req.params.e}/part_${req.params.p}/`;
     const subs = req.body;
     console.log(subs);
 
