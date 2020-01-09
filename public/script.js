@@ -15,8 +15,7 @@ class Subs {
         <span class="sel-frame" onclick="jumpToFrame('${s[0]}')">${s[0]}</span> -
         <span class="sel-frame" onclick="jumpToFrame('${s[1]}')">${s[1]}</span>
       </div>`).join(''));
-    $('.subs').scrollTop($('.subs')[0].scrollHeight);
-    // if (this.subs.length > 0) jumpToFrame(this.subs[this.subs.length - 1]);
+    if ($('.subs').length) $('.subs').scrollTop($('.subs')[0].scrollHeight);
   }
 
   push(s) {
@@ -36,7 +35,6 @@ class Subs {
   }
 }
 
-// console.log('presaved', pre_saved);
 const subs = new Subs(typeof pre_saved === 'undefined' ? [] : pre_saved);
 document.onkeydown = (e) => {
   e = e || window.event;
@@ -70,13 +68,13 @@ const save = () => {
 }
 
 const updateProgress = () => {
-  const total = $('*[id^=img-]').length;
-  $('.progress').css({width: (curr_i * 100/ total)+'%'});
+  const total = $('*[id^=img-]').length - 1;
+  $('.progress').css({width: ((curr_i+1) * 100/ total)+'%'});
 }
 
 let curr_i = -1;
 const moveTo = (i /* index from 0 */) => {
-  if (i >= 0 && $('#img-' + (i+1)).length) {
+  if (i >= 0 && $('#img-' + i).length) {
     $('#img-' + curr_i).hide();
     $('#cap-' + curr_i).hide();
     curr_i = i;
@@ -99,4 +97,6 @@ const jumpToFrame = (frame) => {
   const frameIndex = parseInt(frame.match(/frame(.*)\.jpg/)[1]) - frameOffset;
   moveTo(frameIndex);
 }
-if (typeof pre_saved !== 'undefined') jumpToFrame(pre_saved[pre_saved.length-1]);
+
+if (typeof pre_saved !== 'undefined' && pre_saved.length > 0)
+  jumpToFrame(pre_saved[pre_saved.length-1]);
