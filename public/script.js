@@ -1,5 +1,9 @@
 class Subs {
-  subs = [];
+  subs;
+  constructor(subs) {
+    this.subs = subs || [];
+    this.update();
+  }
   update() {
     const subtext = [];
     this.subs.forEach((sub, i) => {
@@ -20,7 +24,8 @@ class Subs {
   }
 }
 
-const subs = new Subs();
+// console.log('presaved', pre_saved);
+const subs = new Subs(typeof pre_saved === 'undefined' ? [] : pre_saved);
 document.onkeydown = (e) => {
   e = e || window.event;
   switch(e.keyCode) {

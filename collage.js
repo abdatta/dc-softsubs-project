@@ -8,6 +8,10 @@ const pairFrames = async () => {
 
   const fixDigits = (i) => String(i).padStart(6, '0');
 
+  if (!fs.existsSync(curr_dir+'paired/')){
+      fs.mkdirSync(curr_dir+'paired/');
+  }
+
   await Promise.all(pairs.map((pair, i) => {
     if (pair.length < 2) return Promise.reject('Less than 2 frames in a pair!');
 
