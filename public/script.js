@@ -16,9 +16,17 @@ class Subs {
         <span class="sel-frame" onclick="jumpToFrame('${s[1]}')">${s[1]}</span>
       </div>`).join(''));
     $('.subs').scrollTop($('.subs')[0].scrollHeight);
+    // if (this.subs.length > 0) jumpToFrame(this.subs[this.subs.length - 1]);
   }
 
-  push(s) { this.subs.push(s); this.update(); }
+  push(s) {
+    if (this.subs.length > 0 && this.subs[this.subs.length-1] > s) {
+      alert('You can only select frames greater than the last selected frame!');
+      return;
+    }
+    this.subs.push(s);
+    this.update();
+  }
   pop() { this.subs.pop(); this.update(); }
 
   save() {
@@ -47,16 +55,37 @@ document.onkeydown = (e) => {
     case 8: // backspace
         subs.pop();
         break;
-    case 13: // enter
-        subs.save();
-        break;
+    // case 13: // enter
+    //     subs.save();
+    //     break;
     default:
         console.log(e.keyCode);
   }
   // use e.keyCode
 };
 
+const save = () => {
+  subs.save();
+  window.history.back();
+}
+
+const updateProgress = () => {
+  const total = $('*[id^=img-]').length;
+  $('.progress').css({width: (curr_i * 100/ total)+'%'});
+}
+
 let curr_i = -1;
+const moveTo = (i /* index from 0 */) => {
+  if (i >= 0 && $('#img-' + (i+1)).length) {
+    $('#img-' + curr_i).hide();
+    $('#cap-' + curr_i).hide();
+    curr_i = i;
+    $('#img-' + curr_i).show();
+    $('#cap-' + curr_i).show();
+    updateProgress();
+  }
+}
+
 const prev = () => {
   moveTo(curr_i - 1);
 }
@@ -70,19 +99,4 @@ const jumpToFrame = (frame) => {
   const frameIndex = parseInt(frame.match(/frame(.*)\.jpg/)[1]) - frameOffset;
   moveTo(frameIndex);
 }
-
-const moveTo = (i /* index from 0 */) => {
-  if (i > 0 && $('#img-' + (i+1)).length) {
-    $('#img-' + curr_i).hide();
-    $('#cap-' + curr_i).hide();
-    curr_i = i;
-    $('#img-' + curr_i).show();
-    $('#cap-' + curr_i).show();
-    updateProgress();
-  }
-}
-
-const updateProgress = () => {
-  const total = $('*[id^=img-]').length;
-  $('.progress').css({width: (curr_i * 100/ total)+'%'});
-}
+if (typeof pre_saved !== 'undefined') jumpToFrame(pre_saved[pre_saved.length-1]);
