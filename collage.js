@@ -66,4 +66,7 @@ const collageFrames = async () => {
 Promise.resolve() // this line is just for styling the thens
   .then(pairFrames)
   .then(collageFrames)
-  .catch(err => console.error('Error ==>', err));
+  .catch(err => {
+    console.error('Error ==>', err);
+    process.exit(1);
+  });

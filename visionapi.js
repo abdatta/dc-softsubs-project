@@ -24,4 +24,8 @@ client.textDetection(request)
         const results = { responses };
         fs.writeFileSync(curr_dir+'ocr_results.json', JSON.stringify(results, null, 2));
         console.log('Done!');
+    })
+    .catch(err => {
+        console.error('Error ==>', err);
+        process.exit(1);
     });

@@ -1,3 +1,6 @@
+const fs = require('fs');
+const moment = require('moment');
+
 const getTextBlocks = (visionResults) => {
     let textBlocks = [];
     // visionResults.forEach(result => {
@@ -52,30 +55,44 @@ const getBlockText = (block) => {
     return result;
 }
 
-const fs = require('fs');
-const moment = require('moment');
+const epNo = process.argv[2];
+const startPartNo = process.argv[3];
+const endPartNo = process.argv[4] || startPartNo;
 
-const curr_dir = 'public/episode' + process.argv[2] + '/part_' + process.argv[3] + '/';
-const results = JSON.parse(fs.readFileSync(curr_dir+'ocr_results.json'));
-const files = fs.readdirSync(curr_dir+'paired').filter(s => s.endsWith('.jpg'));
-const blocks = getTextBlocks(results.responses);
-if (files.length !== blocks.length) {
-    console.log('blocks and files not of same sizes!', 'block size: ', blocks.length, 'files:', files.length);
-    process.exit(1);
+if (!epNo || !startPartNo) {
+  console.error('Missing arguements!');
+  process.exit(1);
 }
-const submap = files.map((file, i) => {
-  const match = file.match(/frame(.*)_(.*).jpg$/);
-  return {
-    filename: file,
-    start: match && parseInt(match[1]),
-    end: match && parseInt(match[2]),
-    startTS: match && moment.utc(parseInt(match[1]) * 1000 / 29.97).format('HH:mm:ss.SS'),
-    endTS: match && moment.utc(parseInt(match[2]) * 1000 / 29.97).format('HH:mm:ss.SS'),
-    text: blocks[i]
+
+const submap = [];
+
+for (let p = parseInt(startPartNo); p <= parseInt(endPartNo); p++) {
+  const curr_dir = 'public/episode' + epNo + '/part_' + String(p).padStart(2, '0') + '/';
+  const results = JSON.parse(fs.readFileSync(curr_dir+'ocr_results.json'));
+  const files = fs.readdirSync(curr_dir+'paired').filter(s => s.endsWith('.jpg'));
+  const blocks = getTextBlocks(results.responses);
+  if (files.length !== blocks.length) {
+      console.log('blocks and files not of same sizes!', 'block size: ', blocks.length, 'files:', files.length);
+      process.exit(1);
   }
-});
+  submap.push(...files.map((file, i) => {
+    const match = file.match(/frame(.*)_(.*).jpg$/);
+    const fps = 29.97;
+    return {
+      filename: file,
+      start: match && parseInt(match[1]),
+      end: match && parseInt(match[2]),
+      startTS: match && moment.utc(parseInt(match[1]) * 1000 / fps).format('HH:mm:ss.SS'),
+      endTS: match && moment.utc(parseInt(match[2]) * 1000 / fps).format('HH:mm:ss.SS'),
+      text: blocks[i]
+    }
+  }));
+}
 
 const subtemp = fs.readFileSync('subtemp.ass', 'utf8');
-const finalsubs = subtemp + submap.map(sub => `Dialogue: 0,${sub.startTS},${sub.endTS},DCMain,,0000,0000,0000,,${sub.text.replace(/\n/g, ' ').replace(/\s+/g, ' ')}\n`).join('');
-fs.writeFileSync(curr_dir+'ocr_subs.ass', finalsubs);
-console.log(finalsubs);
+const finalsubs = subtemp + submap.map(
+      sub => `Dialogue: 0,${sub.startTS},${sub.endTS},DCMain,,0000,0000,0000,,${sub.text.replace(/\n/g, ' ').replace(/\s+/g, ' ')}`
+  ).join('\n') + '\n';
+const finalsubfile = `public/episode${epNo}/ocr_subs_${epNo}_${startPartNo}${endPartNo === startPartNo ? '' : '_' + endPartNo}.ass`;
+fs.writeFileSync(finalsubfile, finalsubs);
+console.log('Subs written to file:', finalsubfile);
