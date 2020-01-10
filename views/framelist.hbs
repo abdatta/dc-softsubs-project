@@ -14,8 +14,14 @@
     <body style="justify-content: start">
         <h1>Hello, select a folder!</h1>
         <div style="text-align: center;">
-            {{#each eps}}
-                <a href="{{this}}"><h3>{{this}}</h3></a>
+            {{#each epsInfo}}
+                <div class="ep-info">
+                    <a href="{{this.dir}}"><h3>{{this.dir}}</h3></a>
+                    {{#if this.marked}}
+                    <span style="margin: 0 20px;">-</span>
+                    <span>{{this.marked}} subs tagged</span>
+                    {{/if}}
+                </div>
             {{/each}}
         </div>
     

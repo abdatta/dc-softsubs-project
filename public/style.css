@@ -26,6 +26,11 @@ h1 {
   cursor: pointer;
   text-decoration: underline;
 }
+.ep-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .frames {
   display: flex;
   flex-flow: column;

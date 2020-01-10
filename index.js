@@ -16,26 +16,29 @@ app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     const dir = `public`;
-    const files = fs.readdirSync(dir, { withFileTypes: true })
+    const epsInfo = fs.readdirSync(dir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
+        .map(dirent => ({dir: dirent.name}));
     // console.log(files);
-    res.render('framelist', {eps: files});
+    res.render('framelist', { epsInfo });
 });
 
 app.get('/episode:e', (req, res) => {
     const dir = `public/episode${req.params.e}`;
-    const files = fs.readdirSync(dir, { withFileTypes: true })
+    const epsInfo = fs.readdirSync(dir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
+        .map(dirent => ({
+            dir: dirent.name,
+            marked: getMarkedFrames(`${dir}/${dirent.name}`).length + ''
+        }));
 
-        res.render('framelist', {eps: files});
+        res.render('framelist', { epsInfo });
 });
 
 app.get('/episode:e/part_:p/', (req, res) => {
     const dir = `public/episode${req.params.e}/part_${req.params.p}/`;
     const imgs = fs.readdirSync(dir).filter(s => s.startsWith('frame') && s.endsWith('.jpg'));
-    const saved = fs.existsSync(dir+'frames.json') ? JSON.parse(fs.readFileSync(dir+'frames.json')) : [];
+    const saved = getMarkedFrames(dir);
 
     res.render('home', {imgs, dir: dir.split('public/')[1], saved: JSON.stringify(pairsToArray(saved))});
 });
@@ -67,3 +70,5 @@ const pairsToArray = (pairs) => {
     pairs.forEach(pair => array.push(...pair));
     return array;
 }
+
+const getMarkedFrames = (dir) => fs.existsSync(dir+'/frames.json') ? JSON.parse(fs.readFileSync(dir+'/frames.json')) : [];
