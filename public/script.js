@@ -29,8 +29,18 @@ class Subs {
   pop() { this.subs.pop(); this.update(); }
 
   save() {
-    $.ajax({url: "save", type: 'POST', data: JSON.stringify(this.subs), dataType: 'json', contentType: 'application/json', success: (result) => {
-      alert(result);
+    $.ajax({
+      url: "save",
+      type: 'POST',
+      data: JSON.stringify(this.subs),
+      contentType: 'application/json',
+      success: (result) => {
+        alert('Saved Successfully!');
+        backWithinSite();
+      },
+      error: (jqXHR, textStatus, errorThrown) => {
+        alert('Error: ' + errorThrown);
+        console.log(jqXHR, textStatus, errorThrown);
     }});
   }
 }
@@ -64,7 +74,13 @@ document.onkeydown = (e) => {
 
 const save = () => {
   subs.save();
-  window.history.back();
+}
+
+const backWithinSite = () => {
+  if (window.location.pathname !== '/') {
+    const endsWithSlash = window.location.pathname.endsWith('/');
+    window.location = window.location.href.split('/').slice(0, endsWithSlash ? -2 : -1).join('/');
+  }
 }
 
 const updateProgress = () => {
