@@ -1,6 +1,7 @@
 const createCollage = require("@settlin/collage");
 const rp = require('request-promise');
 const fs = require('fs');
+const rimraf = require('rimraf');
 
 const curr_dir = 'public/episode' + process.argv[2] + '/part_' + process.argv[3] + '/';
 
@@ -13,19 +14,21 @@ const pairFrames = async () => {
   console.log(pairs);
   const fixDigits = (i) => String(i).padStart(6, '0');
 
-  if (!fs.existsSync(curr_dir+'paired/')){
-      fs.mkdirSync(curr_dir+'paired/');
+  if (fs.existsSync(curr_dir+'paired/')){
+    rimraf.sync(curr_dir+'paired/');
   }
+  fs.mkdirSync(curr_dir+'paired/');
 
   await Promise.all(pairs.map((pair, i) => {
     if (pair.length < 2) return Promise.reject('Less than 2 frames in a pair!');
 
-    const start = parseInt(pair[0].split('frame')[1].split('.jpg')[0]); //pair[0].split('.jpg')[0];
-    const end = parseInt(pair[1].split('frame')[1].split('.jpg')[0]); // pair[1].split('frame')[1];
+    const start = parseInt(pair[0].split('frame')[1].split('.jpg')[0]);
+    const end = parseInt(pair[1].split('frame')[1].split('.jpg')[0]);
+    const mid = Math.floor((start + end)/2);
     const outfile = `${curr_dir}paired/frame${fixDigits(start)}_${fixDigits(end)}.jpg`;
 
     return new Promise((resolve, reject) => {
-      fs.copyFile(curr_dir + pair[0], outfile, (err) => {
+      fs.copyFile(`${curr_dir}frame${fixDigits(mid)}.jpg`, outfile, (err) => {
           if (err) return reject(err);
           console.log('Created:', outfile);
           // moves used files to used dir
