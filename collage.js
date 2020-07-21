@@ -1,3 +1,4 @@
+require('dotenv').config();
 const createCollage = require("@settlin/collage");
 const rp = require('request-promise');
 const fs = require('fs');
@@ -6,11 +7,13 @@ const rimraf = require('rimraf');
 const curr_dir = 'public/episode' + process.argv[2] + '/part_' + process.argv[3] + '/';
 
 const pairFrames = async () => {
+  if (process.argv[4] === 'url' && !process.env.REMOTE_URL) {
+    throw new Error('No remote url was provided!');
+  }
   const pairs  = JSON.parse(
-                    process.argv[4] === 'url' ?
-                    await rp(curr_dir.replace('public/','https://spoii.tk/') + 'frames.json') :
-                    fs.readFileSync(curr_dir + 'frames.json')
-                 );
+    process.argv[4] !== 'url' ? fs.readFileSync(curr_dir + 'frames.json') :
+    await rp(curr_dir.replace('public/', process.env.REMOTE_URL) + 'frames.json')
+  );
   console.log(pairs);
   const fixDigits = (i) => String(i).padStart(6, '0');
 
