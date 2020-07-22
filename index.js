@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const hbs  = require('hbs');
 const path = require('path');
 const fs = require('fs');
+const serveImagesAsWebp = require('./webp');
 
 // const curr_dir = 'public/frames163/part_' + process.argv[2] + '/';
  
@@ -12,6 +13,7 @@ app.set('views', path.join(__dirname,'views'))
 app.set('view engine', 'hbs')
 
 app.use(bodyParser.json());
+app.use(serveImagesAsWebp);
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
