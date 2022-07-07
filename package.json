@@ -19,7 +19,7 @@
     "hbs": "^4.0.6",
     "imagemin": "^7.0.1",
     "imagemin-webp": "^6.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "rimraf": "^3.0.0"
